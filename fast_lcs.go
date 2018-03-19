@@ -46,7 +46,7 @@ func (pair LcsPair) String() string {
 	return fmt.Sprintf("%+v=%+v", pair.modelIndexes, pair.sampleIndexes)
 }
 
-var emptyLcsPair = &LcsPair{[]int{}, []int{}}
+var EMPTY_PAIR = &LcsPair{[]int{}, []int{}}
 
 type FastLCS struct {
 	model               []interface{}
@@ -61,11 +61,16 @@ type FastLCS struct {
 func NewFastLCS(model, sample []interface{}) *FastLCS {
 	log.SetFlags(log.Ldate | log.Lshortfile)
 	fastLCS := new(FastLCS)
-	fastLCS.dpReady = false
 	fastLCS.model = model
 	fastLCS.sample = sample
-	fastLCS.rows = len(model) + 1
-	fastLCS.columns = len(sample) + 1
+	fastLCS.init()
+	return fastLCS
+}
+
+func (fastLCS *FastLCS) init() {
+	fastLCS.dpReady = false
+	fastLCS.rows = len(fastLCS.model) + 1
+	fastLCS.columns = len(fastLCS.sample) + 1
 	fastLCS.lengthMatrix = make([][]int, fastLCS.rows)
 	for i := range fastLCS.lengthMatrix {
 		fastLCS.lengthMatrix[i] = make([]int, fastLCS.columns)
@@ -75,7 +80,6 @@ func NewFastLCS(model, sample []interface{}) *FastLCS {
 	for i := range fastLCS.pathDirectionMatrix {
 		fastLCS.pathDirectionMatrix[i] = make([]int, fastLCS.columns)
 	}
-	return fastLCS
 }
 
 //LcsLength return LCS length of the matrix
@@ -87,8 +91,27 @@ func equal(left, right interface{}) bool {
 	return reflect.DeepEqual(left, right) //hope to check better solution
 }
 
+type DPCallback interface {
+	WhenDiagonalEquals(row, column int)
+	WhenLeftGreaterThanTop(row, column int)
+	WhenTopGreaterThanLeft(row, column int)
+	WhenTopEqualsLeft(row, column int)
+}
+
+func (lcs *FastLCS) WhenDiagonalEquals(row, column int) {
+}
+
+func (lcs *FastLCS) WhenLeftGreaterThanTop(row, column int) {
+}
+
+func (lcs *FastLCS) WhenTopGreaterThanLeft(row, column int) {
+}
+
+func (lcs *FastLCS) WhenTopEqualsLeft(row, column int) {
+}
+
 //ComputeDP Dynamic programming
-func (lcs *FastLCS) ComputeDP() {
+func (lcs *FastLCS) ComputeDP(callback DPCallback) {
 	if lcs.dpReady {
 		return
 	}
@@ -99,18 +122,22 @@ func (lcs *FastLCS) ComputeDP() {
 			case (i < lcs.rows && j < lcs.columns && equal(lcs.model[i-1], lcs.sample[j-1])):
 				lcs.lengthMatrix[i][j] = lcs.lengthMatrix[i-1][j-1] + 1
 				lcs.pathDirectionMatrix[i][j] = 1
+				callback.WhenDiagonalEquals(i, j)
 				break
 			case (lcs.lengthMatrix[i-1][j] > lcs.lengthMatrix[i][j-1]):
 				lcs.lengthMatrix[i][j] = lcs.lengthMatrix[i-1][j]
 				lcs.pathDirectionMatrix[i][j] = 2
+				callback.WhenLeftGreaterThanTop(i, j)
 				break
 			case (lcs.lengthMatrix[i-1][j] < lcs.lengthMatrix[i][j-1]):
 				lcs.lengthMatrix[i][j] = lcs.lengthMatrix[i][j-1]
 				lcs.pathDirectionMatrix[i][j] = 3
+				callback.WhenTopGreaterThanLeft(i, j)
 				break
 			default:
 				lcs.lengthMatrix[i][j] = lcs.lengthMatrix[i][j-1]
 				lcs.pathDirectionMatrix[i][j] = 4
+				callback.WhenTopEqualsLeft(i, j)
 				break
 			}
 		}
@@ -227,10 +254,10 @@ func (this *FastLCS) addAllJumpElements(store []*Element, leftBottomPoint, right
 
 func (this *FastLCS) FindAllLcsPairs() []*LcsPair {
 	if !this.dpReady {
-		this.ComputeDP()
+		this.ComputeDP(this)
 	}
 	if this.lengthMatrix[this.rows-1][this.columns-1] == 0 {
-		return []*LcsPair{emptyLcsPair}
+		return []*LcsPair{EMPTY_PAIR}
 	}
 	var store, print []*Element
 	print = make([]*Element, 0, this.lengthMatrix[this.rows-1][this.columns-1]+1)
