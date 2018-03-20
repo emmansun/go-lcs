@@ -37,6 +37,10 @@ func NewNormalLCS(model, sample []interface{}) *NormalLCS {
 	return normalLCS
 }
 
+func NewNormalLCSString(model, sample string) *NormalLCS {
+	return NewNormalLCS(convertString(model), convertString(sample))
+}
+
 func (lcs *NormalLCS) WhenDiagonalEquals(row, column int) {
 	top := lcs.lengthMatrix[row][column-1]
 	left := lcs.lengthMatrix[row-1][column]

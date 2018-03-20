@@ -67,6 +67,19 @@ func NewFastLCS(model, sample []interface{}) *FastLCS {
 	return fastLCS
 }
 
+func convertString(s string) []interface{} {
+	r := []rune(s)
+	result := make([]interface{}, len(r))
+	for i, v := range r {
+		result[i] = v
+	}
+	return result
+}
+
+func NewFastLCSString(model, sample string) *FastLCS {
+	return NewFastLCS(convertString(model), convertString(sample))
+}
+
 func (fastLCS *FastLCS) init() {
 	fastLCS.dpReady = false
 	fastLCS.rows = len(fastLCS.model) + 1

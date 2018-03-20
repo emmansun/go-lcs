@@ -6,46 +6,37 @@ import (
 	"github.com/emmansun/go-lcs"
 )
 
-func convert(s string) []interface{} {
-	r := []rune(s)
-	result := make([]interface{}, len(r))
-	for i, v := range r {
-		result[i] = v
-	}
-	return result
-}
-
 func main() {
 
-	fastLCS := lcs.NewFastLCS(convert("GAC"), convert("AGCAT"))
+	fastLCS := lcs.NewFastLCSString("GAC", "AGCAT")
 	pairs := fastLCS.FindAllLcsPairs()
 	log.Printf("[FAST] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	normalLCS := lcs.NewNormalLCS(convert("GAC"), convert("AGCAT"))
+	normalLCS := lcs.NewNormalLCSString("GAC", "AGCAT")
 	pairs = normalLCS.FindAllLcsPairs()
 	log.Printf("[NORMAL] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	fastLCS = lcs.NewFastLCS(convert("BADCDCBA"), convert("ABCDCDAB"))
+	fastLCS = lcs.NewFastLCSString("BADCDCBA", "ABCDCDAB")
 	pairs = fastLCS.FindAllLcsPairs()
 	log.Printf("[FAST] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	normalLCS = lcs.NewNormalLCS(convert("BADCDCBA"), convert("ABCDCDAB"))
+	normalLCS = lcs.NewNormalLCSString("BADCDCBA", "ABCDCDAB")
 	pairs = normalLCS.FindAllLcsPairs()
 	log.Printf("[NORMAL] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	fastLCS = lcs.NewFastLCS(convert("ABAB"), convert("ABABAB"))
+	fastLCS = lcs.NewFastLCSString("ABAB", "ABABAB")
 	pairs = fastLCS.FindAllLcsPairs()
 	log.Printf("[FAST] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	normalLCS = lcs.NewNormalLCS(convert("ABAB"), convert("ABABAB"))
+	normalLCS = lcs.NewNormalLCSString("ABAB", "ABABAB")
 	pairs = normalLCS.FindAllLcsPairs()
 	log.Printf("[NORMAL] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	fastLCS = lcs.NewFastLCS(convert("ABCAAABBABBCCABCBACABABABCCBC"), convert("ABCABABABCBACABCBACABABACBCB"))
+	fastLCS = lcs.NewFastLCSString("ABCAAABBABBCCABCBACABABABCCBC", "ABCABABABCBACABCBACABABACBCB")
 	pairs = fastLCS.FindAllLcsPairs()
 	log.Printf("[FAST] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 
-	normalLCS = lcs.NewNormalLCS(convert("ABCAAABBABBCCABCBACABABABCCBC"), convert("ABCABABABCBACABCBACABABACBCB"))
+	normalLCS = lcs.NewNormalLCSString("ABCAAABBABBCCABCBACABABABCCBC", "ABCABABABCBACABCBACABABACBCB")
 	pairs = normalLCS.FindAllLcsPairs()
 	log.Printf("[NORMAL] Candidate size=%d, Candicates=%v\n\n", len(pairs), pairs)
 }
