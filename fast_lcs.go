@@ -13,7 +13,7 @@ type Point struct {
 }
 
 type Element struct {
-	Point
+	Point  //anonymous field
 	lcsLen int
 }
 
