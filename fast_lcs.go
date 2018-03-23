@@ -48,6 +48,11 @@ func (pair LcsPair) String() string {
 
 var EMPTY_PAIR = &LcsPair{[]int{}, []int{}}
 
+type LCSInterface interface {
+	MaxLcsLen() int
+	FindAllLcsPairs() []*LcsPair
+}
+
 type FastLCS struct {
 	model               []interface{}
 	sample              []interface{}
@@ -93,11 +98,6 @@ func (fastLCS *FastLCS) init() {
 	for i := range fastLCS.pathDirectionMatrix {
 		fastLCS.pathDirectionMatrix[i] = make([]int, fastLCS.columns)
 	}
-}
-
-//LcsLength return LCS length of the matrix
-func (lcs *FastLCS) LcsLength() int {
-	return lcs.lengthMatrix[lcs.rows-1][lcs.columns-1]
 }
 
 func equal(left, right interface{}) bool {
@@ -155,7 +155,7 @@ func (lcs *FastLCS) ComputeDP(callback DPCallback) {
 			}
 		}
 	}
-	log.Printf("modelSize=%d, sampleSize=%d, LCSLen=%d\n", lcs.rows-1, lcs.columns-1, lcs.LcsLength())
+	log.Printf("modelSize=%d, sampleSize=%d, LCSLen=%d\n", lcs.rows-1, lcs.columns-1, lcs.MaxLcsLen())
 }
 
 func pop(stack []*Element) (*Element, []*Element) {
@@ -263,6 +263,13 @@ func (this *FastLCS) addAllJumpElements(store []*Element, leftBottomPoint, right
 		}
 	}
 	return store
+}
+
+func (this *FastLCS) MaxLcsLen() int {
+	if !this.dpReady {
+		this.ComputeDP(this)
+	}
+	return this.lengthMatrix[this.rows-1][this.columns-1]
 }
 
 func (this *FastLCS) FindAllLcsPairs() []*LcsPair {
