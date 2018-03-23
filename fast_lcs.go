@@ -38,12 +38,12 @@ func (pt Point) String() string {
 }
 
 type LcsPair struct {
-	modelIndexes  []int
-	sampleIndexes []int
+	ModelIndexes  []int
+	SampleIndexes []int
 }
 
 func (pair LcsPair) String() string {
-	return fmt.Sprintf("%+v=%+v", pair.modelIndexes, pair.sampleIndexes)
+	return fmt.Sprintf("%+v=%+v", pair.ModelIndexes, pair.SampleIndexes)
 }
 
 var EMPTY_PAIR = &LcsPair{[]int{}, []int{}}
@@ -173,18 +173,18 @@ func reverse(arr []int) []int {
 
 func (this *FastLCS) createLcsPair(print []*Element) *LcsPair {
 	pair := new(LcsPair)
-	pair.modelIndexes = make([]int, 0, len(print)-1)
-	pair.sampleIndexes = make([]int, 0, len(print)-1)
+	pair.ModelIndexes = make([]int, 0, len(print)-1)
+	pair.SampleIndexes = make([]int, 0, len(print)-1)
 	for _, v := range print {
 		if v.row > 0 && v.row < this.rows {
-			pair.modelIndexes = append(pair.modelIndexes, v.row-1)
+			pair.ModelIndexes = append(pair.ModelIndexes, v.row-1)
 		}
 		if v.column > 0 && v.column < this.columns {
-			pair.sampleIndexes = append(pair.sampleIndexes, v.column-1)
+			pair.SampleIndexes = append(pair.SampleIndexes, v.column-1)
 		}
 	}
-	pair.modelIndexes = reverse(pair.modelIndexes)
-	pair.sampleIndexes = reverse(pair.sampleIndexes)
+	pair.ModelIndexes = reverse(pair.ModelIndexes)
+	pair.SampleIndexes = reverse(pair.SampleIndexes)
 	return pair
 }
 

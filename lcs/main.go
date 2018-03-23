@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"log"
 	"os"
 
@@ -45,7 +47,24 @@ func main() {
 			lcsImpl = lcs.NewNormalLCSString(modelStr, sampleStr)
 			pairs = lcsImpl.FindAllLcsPairs()
 		}
-		log.Printf("[FAST] Max lcs len=%d, Candidate size=%d, Candicates=%v\n\n", lcsImpl.MaxLcsLen(), len(pairs), pairs)
+		log.Printf("[FAST] Model=%v, Sample=%v, Max lcs len=%d, Candidate size=%d\n", modelStr, sampleStr, lcsImpl.MaxLcsLen(), len(pairs))
+		var modelCandidate, sampleCandidate bytes.Buffer
+		for i, pair := range pairs {
+			log.Printf("The %d candidate:\n", i+1)
+			modelCandidate.WriteString("model  index: ")
+			sampleCandidate.WriteString("sample index: ")
+			for _, mi := range pair.ModelIndexes {
+				modelCandidate.WriteString(fmt.Sprintf("%c:%d ", modelStr[mi], mi))
+			}
+			for _, si := range pair.SampleIndexes {
+				sampleCandidate.WriteString(fmt.Sprintf("%c:%d ", sampleStr[si], si))
+			}
+			log.Println(modelCandidate.String())
+			log.Println(sampleCandidate.String())
+			log.Println()
+			modelCandidate.Reset()
+			sampleCandidate.Reset()
+		}
 		return nil
 	}
 

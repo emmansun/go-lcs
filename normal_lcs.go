@@ -148,8 +148,8 @@ func (this *NormalLCS) findAllLcsPairs(vertex *Point) map[string]*LcsPair {
 	if this.pathDirectionMatrix[vertex.row][vertex.column] == 1 {
 		candidatesClone := map[string]*LcsPair{}
 		for _, candidate := range candidates {
-			candidate.modelIndexes = append(candidate.modelIndexes, vertex.row-1)
-			candidate.sampleIndexes = append(candidate.sampleIndexes, vertex.column-1)
+			candidate.ModelIndexes = append(candidate.ModelIndexes, vertex.row-1)
+			candidate.SampleIndexes = append(candidate.SampleIndexes, vertex.column-1)
 			candidatesClone[candidate.String()] = candidate
 		}
 		candidates = candidatesClone
